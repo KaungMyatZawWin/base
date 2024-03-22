@@ -1,12 +1,33 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import multer from "multer";
+import { IncomingForm } from "formidable";
 
 const upload = multer({ dest: "uploads/" });
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export default async function handler(req, res) {
   // // need to get request (Please convert request to pdf file in here)
 
-  console.log(req.body);
+  const form = new IncomingForm();
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      res.status(500).json({ error: "Error parsing form data" });
+      return;
+    }
+
+    // Handle form data
+    console.log(fields);
+    console.log(files);
+
+    // Respond accordingly
+    res.status(200).json({ message: "Form data received successfully" });
+  });
 
   // upload.single("file")(req, res, function (err) {
   //   if (err instanceof multer.MulterError) {
