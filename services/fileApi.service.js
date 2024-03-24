@@ -21,7 +21,7 @@ export const uploadPdf = async () => {
       // const bf = Buffer.from(file.base64String)
       data.append(`files[${index}].FileType`, file.fileType);
       data.append(`files[${index}].FileName`, "");
-      data.append(`files[${index}].File`, convertedBlob);
+      data.append(`files[${index}].File`, convertedFile);
       // data.append(`files[${index}].File`, bf);
     });
 

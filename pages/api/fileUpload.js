@@ -14,31 +14,34 @@ export const config = {
 export default async function handler(req, res) {
   // // need to get request (Please convert request to pdf file in here)
 
-  const form = formidable({});
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      next(err);
-      return;
-    }
+  let base64Data = [];
 
-    // for (const key in files) {
-    //   const binaryData = files[key][0];
-    //   console.log('check...', binaryData);
-      
-    // }
+  const form = formidable();
 
-    const firstFile = files['files[0].File'][0];
-    fs.readFile(firstFile.filepath, (err, data) => {
-      if (err) {
-        console.error('Error reading file:', err);
-        return;
-      }
-      const base64String = Buffer.from(data).toString('base64');
-    
-      console.log('Base64 string:', base64String);
-    });
-    
-  });
+  const [fields, files] = await form.parse(req);
+
+  const promises = Object.values(files).flatMap(fileArray =>
+    fileArray.map(file =>
+      new Promise((resolve, reject) => {
+        fs.readFile(file.filepath, (err, data) => {
+          if (err) {
+            console.error("Error reading file:", err);
+            reject(err);
+            return;
+          }
+          const base64String = Buffer.from(data).toString("base64");
+          base64Data.push(base64String);
+          resolve();
+        });
+      })
+    )
+  );
+  
+  await Promise.all(promises);
+  
+  console.log("checking base64 data ...", base64Data);
+  
+  // console.log("checking base64 data ...",base64Data);
 
   // const fileObject = files['files[0].File'];
   // console.log('checking...', req.body);
