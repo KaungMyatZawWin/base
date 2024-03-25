@@ -20,7 +20,7 @@ export const uploadPdf = async () => {
       const convertedBlob = b64toBlob(file.base64String)
       // const bf = Buffer.from(file.base64String)
       data.append(`files[${index}].FileType`, file.fileType);
-      data.append(`files[${index}].FileName`, "");
+      data.append(`files[${index}].FileName`, file.fileName);
       data.append(`files[${index}].File`, convertedFile);
       // data.append(`files[${index}].File`, bf);
     });
@@ -35,7 +35,7 @@ export const uploadPdf = async () => {
   }
 };
 
-function base64toFile(base64String, fileName) {
+export function base64toFile(base64String, fileName) {
   const parts = base64String.split(";base64,");
   const mimeType = parts[0].split(":")[1];
   const base64Data = parts[1];
